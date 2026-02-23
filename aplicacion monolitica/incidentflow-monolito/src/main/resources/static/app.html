@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Tickets</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .menu {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #396afc 0%, #2948ff 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .content {
+            padding: 30px;
+            background: white;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 25px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .badge-alta { background: #dc3545; }
+        .badge-media { background: #ffc107; color: #333; }
+        .badge-baja { background: #28a745; }
+        .badge-abierto { background: #17a2b8; }
+        .badge-proceso { background: #ffc107; color: #333; }
+        .badge-cerrado { background: #6c757d; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+        
+        .error {
+            color: #dc3545;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+        .success {
+            color: #28a745;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Arquitectura Monolítica</h1>
+            <p>Sistema de Soporte Técnico</p>
+            <p style="margin-top: 10px; font-size: 0.9em;">✅ API Conectada - Puerto 8080</p>
+        </div>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <h3 id="totalUsuarios">-</h3>
+                <p>👥 Usuarios</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalIncidentes">-</h3>
+                <p>📋 Incidentes</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="incidentesAbiertos">-</h3>
+                <p>⚠️ Pendientes</p>
+            </div>
+        </div>
+        
+        <div class="menu">
+            <button class="btn btn-primary" onclick="mostrarUsuarios()">👥 Usuarios</button>
+            <button class="btn btn-success" onclick="mostrarIncidentes()">📋 Incidentes</button>
+            <button class="btn btn-warning" onclick="abrirModalCrearUsuario()">➕ Nuevo Usuario</button>
+            <button class="btn btn-success" onclick="abrirModalCrearIncidente()">📝 Nuevo Incidente</button>
+        </div>
+        
+        <div class="content">
+            <div id="error" class="error"></div>
+            <div id="success" class="success"></div>
+            
+            <div class="search-box" id="searchContainer" style="display: none;">
+                <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="buscarTabla()">
+            </div>
+            
+            <div id="loading" class="loading"></div>
+            <div id="tableContainer" class="table-container"></div>
+        </div>
+        
+        <div class="footer">
+            <p>Spring Boot 3.5.10</p>
+            <p style="font-size: 0.85em; margin-top: 5px;">© 2026 - Sistema de Soporte Técnico</p>
+        </div>
+    </div>
+    
+    <!-- MODAL CREAR USUARIO -->
+    <div id="modalUsuario" class="modal">
+        <div class="modal-content">
+            <h2>➕ Crear Nuevo Usuario</h2>
+            <div class="form-group">
+                <label>Nombre:</label>
+                <input type="text" id="usuarioNombre" placeholder="Ingrese nombre completo">
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="usuarioEmail" placeholder="correo@empresa.com">
+            </div>
+            <div class="form-group">
+                <label>Rol:</label>
+                <select id="usuarioRol">
+                    <option value="USUARIO">👤 Usuario</option>
+                    <option value="TECNICO">🔧 Técnico</option>
+                    <option value="ADMIN">👑 Administrador</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-success" onclick="crearUsuario()">Guardar</button>
+                <button class="btn btn-warning" onclick="cerrarModal('modalUsuario')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL CREAR INCIDENTE -->
+    <div id="modalIncidente" class="modal">
+        <div class="modal-content">
+            <h2>📝 Crear Nuevo Incidente</h2>
+            <div class="form-group">
+                <label>Título:</label>
+                <input type="text" id="incidenteTitulo" placeholder="Ej: PC no enciende">
+            </div>
+            <div class="form-group">
+                <label>Descripción:</label>
+                <textarea id="incidenteDescripcion" rows="3" placeholder="Describa el problema..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Prioridad:</label>
+                <select id="incidentePrioridad">
+                    <option value="ALTA">🔴 Alta</option>
+                    <option value="MEDIA">🟡 Media</option>
+                    <option value="BAJA">🟢 Baja</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ID Usuario:</label>
+                <input type="number" id="incidenteUsuarioId" placeholder="ID del usuario">
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button class="btn btn-success" onclick="crearIncidente()">Guardar</button>
+                <button class="btn btn-warning" onclick="cerrarModal('modalIncidente')">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+
+        // carga los datos iniciales
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarEstadisticas();
+            mostrarUsuarios();
+        });
+        
+        // crea las estadisticas
+        async function cargarEstadisticas() {
+            try {
+                const [usuarios, incidentes, asignaciones] = await Promise.all([
+                    fetch(`${API_URL}/usuarios`).then(r => r.json()),
+                    fetch(`${API_URL}/incidentes`).then(r => r.json()),
+                ]);
+                
+                document.getElementById('totalUsuarios').textContent = usuarios.length;
+                document.getElementById('totalIncidentes').textContent = incidentes.length;
+                document.getElementById('incidentesAbiertos').textContent = 
+                    incidentes.filter(i => i.estado === 'ABIERTO').length;
+            } catch (error) {
+                mostrarError('Error al cargar estadísticas');
+            }
+        }
+        
+        // crea los usuarios
+        async function mostrarUsuarios() {
+            mostrarLoading(true);
+            document.getElementById('searchContainer').style.display = 'flex';
+            
+            try {
+                const response = await fetch(`${API_URL}/usuarios`);
+                const usuarios = await response.json();
+                
+                let html = '<table><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>F.Registro</th><th>Acciones</th></tr>';
+                
+                usuarios.forEach(u => {
+                    html += `<tr>
+                        <td>${u.id}</td>
+                        <td>${u.nombre}</td>
+                        <td>${u.email}</td>
+                        <td><span class="badge" style="background: ${getRolColor(u.rol)}">${u.rol}</span></td>
+                        <td>${u.fechaRegistro}</td>
+                        <td>
+                            <button class="btn" style="background: #dc3545; padding: 5px 10px;" onclick="eliminarUsuario(${u.id})">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+                
+                html += '</table>';
+                document.getElementById('tableContainer').innerHTML = html;
+            } catch (error) {
+                mostrarError('Error al cargar usuarios');
+            }
+            
+            mostrarLoading(false);
+        }
+        
+        // crea los incidentes
+        async function mostrarIncidentes() {
+            mostrarLoading(true);
+            document.getElementById('searchContainer').style.display = 'flex';
+            
+            try {
+                const response = await fetch(`${API_URL}/incidentes`);
+                const incidentes = await response.json();
+                
+                let html = '<table><tr><th>ID</th><th>Título</th><th>Prioridad</th><th>Estado</th><th>Usuario</th><th>Fecha</th><th>Acciones</th></tr>';
+                
+                incidentes.forEach(i => {
+                    html += `<tr>
+                        <td>${i.id}</td>
+                        <td>${i.titulo}</td>
+                        <td><span class="badge badge-${i.prioridad.toLowerCase()}">${i.prioridad}</span></td>
+                        <td><span class="badge" style="background: ${getEstadoColor(i.estado)}">${i.estado}</span></td>
+                        <td>${i.usuarioNombre || 'N/A'}</td>
+                        <td>${i.fechaCreacion}</td>
+                        <td>
+                            <button class="btn" style="background: #dc3545; padding: 5px 10px;" onclick="eliminarIncidente(${i.id})">🗑️</button>
+                        </td>
+                    </tr>`;
+                });
+                
+                html += '</table>';
+                document.getElementById('tableContainer').innerHTML = html;
+            } catch (error) {
+                mostrarError('Error al cargar incidentes');
+            }
+            
+            mostrarLoading(false);
+        }
+
+        async function crearUsuario() {
+            const usuario = {
+                nombre: document.getElementById('usuarioNombre').value.trim(),
+                email: document.getElementById('usuarioEmail').value.trim(),
+                rol: document.getElementById('usuarioRol').value
+            };
+
+            console.log("Datos del usuario:", usuario);
+
+            try {
+                const response = await fetch(`${API_URL}/usuarios`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(usuario)
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    console.error("Error backend:", error);
+                    mostrarError("Error al crear usuario");
+                    return;
+                }
+
+                mostrarSuccess("Usuario creado correctamente");
+                cerrarModal('modalUsuario');
+                limpiarFormUsuario();
+                mostrarUsuarios();
+                cargarEstadisticas();
+
+            } catch (error) {
+                console.error(error);
+                mostrarError("No se pudo conectar con el servidor");
+            }
+        }
+
+        // crea el incidente
+        async function crearIncidente() {
+            const incidente = {
+                titulo: document.getElementById('incidenteTitulo').value,
+                descripcion: document.getElementById('incidenteDescripcion').value,
+                prioridad: document.getElementById('incidentePrioridad').value,
+                estado: 'ABIERTO',
+                usuarioId: parseInt(document.getElementById('incidenteUsuarioId').value)
+            };
+
+            console.log("Incidente enviado:", incidente);
+            
+            try {
+                const response = await fetch(`${API_URL}/incidentes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(incidente)
+                });
+                
+                if (response.ok) {
+                    mostrarSuccess('Incidente creado correctamente');
+                    cerrarModal('modalIncidente');
+                    mostrarIncidentes();
+                    cargarEstadisticas();
+                    limpiarFormIncidente();
+                } else {
+                    mostrarError('Usuario no existe');
+                }
+            } catch (error) {
+                mostrarError('Error al crear incidente');
+            }
+        }
+
+        // elimina los incidentes, usuarios y asignaciones
+        async function eliminarUsuario(id) {
+            if (confirm('¿Eliminar usuario?')) {
+                await fetch(`${API_URL}/usuarios/${id}`, { method: 'DELETE' });
+                mostrarSuccess('Usuario eliminado');
+                mostrarUsuarios();
+                cargarEstadisticas();
+            }
+        }
+
+        async function eliminarIncidente(id) {
+            if (confirm('¿Eliminar incidente?')) {
+                await fetch(`${API_URL}/incidentes/${id}`, { method: 'DELETE' });
+                mostrarSuccess('Incidente eliminado');
+                mostrarIncidentes();
+                cargarEstadisticas();
+            }
+        }
+
+        // asigna los incidentes
+        async function asignarIncidente(incidenteId) {
+            const tecnicoId = prompt('Ingrese ID del técnico:');
+            if (tecnicoId) {
+                const asignacion = {
+                    incidenteId: incidenteId,
+                    tecnicoId: parseInt(tecnicoId),
+                    estado: 'ACTIVA'
+                };
+
+                try {
+                    const response = await fetch(`${API_URL}/asignaciones`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(asignacion)
+                    });
+                    
+                    if (response.ok) {
+                        mostrarSuccess('Incidente asignado correctamente');
+                        mostrarIncidentes();
+                    } else {
+                        mostrarError('Error al asignar');
+                    }
+                } catch (error) {
+                    mostrarError('Error al asignar');
+                }
+            }
+        }
+
+        // utilidades
+        function getRolColor(rol) {
+            const colores = { ADMIN: '#6f42c1', TECNICO: '#17a2b8', USUARIO: '#28a745' };
+            return colores[rol] || '#6c757d';
+        }
+
+        function getEstadoColor(estado) {
+            const colores = { ABIERTO: '#17a2b8', EN_PROCESO: '#ffc107', CERRADO: '#6c757d' };
+            return colores[estado] || '#6c757d';
+        }
+
+        function buscarTabla() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const table = document.querySelector('table');
+            const tr = table.getElementsByTagName('tr');
+            
+            for (let i = 1; i < tr.length; i++) {
+                tr[i].style.display = 'none';
+                const td = tr[i].getElementsByTagName('td');
+                for (let j = 0; j < td.length; j++) {
+                    if (td[j].innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = '';
+                        break;
+                    }
+                }
+            }
+        }
+
+        function abrirModalCrearUsuario() {
+            document.getElementById('modalUsuario').style.display = 'flex';
+        }
+
+        function abrirModalCrearIncidente() {
+            document.getElementById('modalIncidente').style.display = 'flex';
+        }
+
+        function cerrarModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function limpiarFormUsuario() {
+            document.getElementById('usuarioNombre').value = '';
+            document.getElementById('usuarioEmail').value = '';
+            document.getElementById('usuarioRol').value = 'USUARIO';
+        }
+
+        function limpiarFormIncidente() {
+            document.getElementById('incidenteTitulo').value = '';
+            document.getElementById('incidenteDescripcion').value = '';
+            document.getElementById('incidentePrioridad').value = 'MEDIA';
+            document.getElementById('incidenteUsuarioId').value = '';
+        }
+
+        function mostrarLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function mostrarError(mensaje) {
+            const error = document.getElementById('error');
+            error.textContent = mensaje;
+            error.style.display = 'block';
+            setTimeout(() => error.style.display = 'none', 3000);
+        }
+
+        function mostrarSuccess(mensaje) {
+            const success = document.getElementById('success');
+            success.textContent = mensaje;
+            success.style.display = 'block';
+            setTimeout(() => success.style.display = 'none', 3000);
+        }
+
+        // Cerrar modales con click fuera
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

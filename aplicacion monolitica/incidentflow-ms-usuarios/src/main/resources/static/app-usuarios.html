@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS-Usuarios - IncidentFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .badge-ms {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #11998e;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .menu {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 5px solid #11998e;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-admin { background: #6f42c1; }
+        .badge-tecnico { background: #17a2b8; }
+        .badge-usuario { background: #28a745; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success-message {
+            color: #28a745;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .db-info {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🔵 MS-Usuarios</h1>
+        <p>Microservicio de Gestión de Usuarios</p>
+        <span class="badge-ms">Puerto 8081 | Base de Datos: PostgreSQL</span>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3 id="totalUsuarios">-</h3>
+            <p>👥 Total Usuarios</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="totalAdmins">-</h3>
+            <p>👑 Administradores</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="totalTecnicos">-</h3>
+            <p>🔧 Técnicos</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="totalUsuariosNormales">-</h3>
+            <p>👤 Usuarios</p>
+        </div>
+    </div>
+
+    <div class="menu">
+        <button class="btn btn-primary" onclick="cargarUsuarios()">📋 Actualizar</button>
+        <button class="btn btn-success" onclick="abrirModalCrear()">➕ Nuevo Usuario</button>
+    </div>
+
+    <div class="content">
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <div id="loading" class="loading"></div>
+        <div id="tableContainer" class="table-container"></div>
+    </div>
+
+    <div class="footer">
+        <p>Spring Boot 3.5.10</p>
+        <p style="font-size: 0.85em; margin-top: 5px;">© 2026 - Sistema de Soporte Técnico</p>
+    </div>
+</div>
+
+<!-- MODAL CREAR USUARIO -->
+<div id="modalUsuario" class="modal">
+    <div class="modal-content">
+        <h2>➕ Crear Nuevo Usuario</h2>
+        <div class="form-group">
+            <label>Nombre completo:</label>
+            <input type="text" id="usuarioNombre" placeholder="Ej: Juan Pérez" required>
+        </div>
+        <div class="form-group">
+            <label>Email corporativo:</label>
+            <input type="email" id="usuarioEmail" placeholder="juan.perez@empresa.com" required>
+        </div>
+        <div class="form-group">
+            <label>Rol:</label>
+            <select id="usuarioRol" required>
+                <option value="USUARIO">👤 Usuario</option>
+                <option value="TECNICO">🔧 Técnico</option>
+                <option value="ADMIN">👑 Administrador</option>
+            </select>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="btn btn-success" onclick="crearUsuario()">Guardar</button>
+            <button class="btn btn-danger" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8081/api';
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarUsuarios();
+    });
+
+    function mostrarError(mensaje) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = mensaje;
+        errorDiv.style.display = 'block';
+        setTimeout(() => errorDiv.style.display = 'none', 3000);
+    }
+
+    function mostrarSuccess(mensaje) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = mensaje;
+        successDiv.style.display = 'block';
+        setTimeout(() => successDiv.style.display = 'none', 3000);
+    }
+
+    function mostrarLoading(show) {
+        document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+
+    async function cargarUsuarios() {
+        mostrarLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/usuarios`);
+            if (!response.ok) throw new Error('Error al cargar usuarios');
+
+            const usuarios = await response.json();
+
+            // Actualizar estadísticas
+            document.getElementById('totalUsuarios').textContent = usuarios.length;
+            document.getElementById('totalAdmins').textContent = usuarios.filter(u => u.rol === 'ADMIN').length;
+            document.getElementById('totalTecnicos').textContent = usuarios.filter(u => u.rol === 'TECNICO').length;
+            document.getElementById('totalUsuariosNormales').textContent = usuarios.filter(u => u.rol === 'USUARIO').length;
+
+            // Generar tabla
+            let html = '<table><tr><th>ID</th><th>Nombre</th><th>Email</th><th>Rol</th><th>F.Registro</th><th>Acciones</th></tr>';
+
+            usuarios.forEach(u => {
+                const rolClass = u.rol === 'ADMIN' ? 'badge-admin' : (u.rol === 'TECNICO' ? 'badge-tecnico' : 'badge-usuario');
+
+                html += `<tr>
+                        <td>${u.id}</td>
+                        <td><strong>${u.nombre}</strong></td>
+                        <td>${u.email}</td>
+                        <td><span class="badge ${rolClass}">${u.rol}</span></td>
+                        <td>${u.fechaRegistro || 'N/A'}</td>
+                        <td>
+                            <button class="btn" style="background: #17a2b8; padding: 5px 10px;" onclick="editarUsuario(${u.id})">✏️</button>
+                            <button class="btn" style="background: #dc3545; padding: 5px 10px;" onclick="eliminarUsuario(${u.id})">🗑️</button>
+                        </td>
+                    </tr>`;
+            });
+
+            html += '</table>';
+            document.getElementById('tableContainer').innerHTML = html;
+        } catch (error) {
+            mostrarError('❌ Error al cargar usuarios: ' + error.message);
+        }
+        mostrarLoading(false);
+    }
+
+    async function crearUsuario() {
+        const nombre = document.getElementById('usuarioNombre').value;
+        const email = document.getElementById('usuarioEmail').value;
+        const rol = document.getElementById('usuarioRol').value;
+
+        if (!nombre || !email) {
+            mostrarError('❌ Nombre y email son obligatorios');
+            return;
+        }
+
+        const usuario = { nombre, email, rol };
+
+        try {
+            const response = await fetch(`${API_URL}/usuarios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(usuario)
+            });
+
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error);
+            }
+
+            mostrarSuccess('✅ Usuario creado correctamente');
+            cerrarModal();
+            cargarUsuarios();
+            limpiarForm();
+        } catch (error) {
+            mostrarError('❌ Error al crear usuario: ' + error.message);
+        }
+    }
+
+    async function editarUsuario(id) {
+        const nuevoNombre = prompt('Ingrese el nuevo nombre:');
+        if (nuevoNombre) {
+            try {
+                const response = await fetch(`${API_URL}/usuarios/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nombre: nuevoNombre })
+                });
+
+                if (response.ok) {
+                    mostrarSuccess('✅ Usuario actualizado');
+                    cargarUsuarios();
+                }
+            } catch (error) {
+                mostrarError('❌ Error al actualizar');
+            }
+        }
+    }
+
+    async function eliminarUsuario(id) {
+        if (confirm('¿Está seguro de eliminar este usuario?')) {
+            try {
+                const response = await fetch(`${API_URL}/usuarios/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    mostrarSuccess('✅ Usuario eliminado');
+                    cargarUsuarios();
+                }
+            } catch (error) {
+                mostrarError('❌ Error al eliminar');
+            }
+        }
+    }
+
+    function abrirModalCrear() {
+        document.getElementById('modalUsuario').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalUsuario').style.display = 'none';
+        limpiarForm();
+    }
+
+    function limpiarForm() {
+        document.getElementById('usuarioNombre').value = '';
+        document.getElementById('usuarioEmail').value = '';
+        document.getElementById('usuarioRol').value = 'USUARIO';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS-Incidentes - IncidentFlow</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .badge-ms {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #11998e;
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .menu {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: white;
+            border-bottom: 1px solid #eee;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .info-box {
+            background: #e8f5e9;
+            border-left: 5px solid #11998e;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        .connection-status {
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+
+        .connected {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .disconnected {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-ALTA { background: #dc3545; }
+        .badge-MEDIA { background: #ffc107; color: #333; }
+        .badge-BAJA { background: #28a745; }
+        .badge-ABIERTO { background: #17a2b8; }
+        .badge-EN_PROCESO { background: #ffc107; color: #333; }
+        .badge-CERRADO { background: #6c757d; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+        }
+
+        .modal-content h2 {
+            color: #11998e;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #11998e;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #11998e;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #eee;
+        }
+
+        .error-message {
+            color: #dc3545;
+            padding: 10px;
+            background: #f8d7da;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .success-message {
+            color: #28a745;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: none;
+        }
+
+        .filter-section {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+        }
+
+        .db-info {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>🟢 MS-Incidentes</h1>
+        <p>Microservicio de Gestión de Incidentes</p>
+        <span class="badge-ms">Puerto 8082 | Base de Datos: PostgreSQL</span>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3 id="totalIncidentes">-</h3>
+            <p>📋 Total Incidentes</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="abiertos">-</h3>
+            <p>⚠️ Abiertos</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="proceso">-</h3>
+            <p>🔄 En Proceso</p>
+        </div>
+        <div class="stat-card">
+            <h3 id="cerrados">-</h3>
+            <p>✅ Cerrados</p>
+        </div>
+    </div>
+
+    <div class="menu">
+        <button class="btn btn-primary" onclick="cargarIncidentes()">📋 Actualizar</button>
+        <button class="btn btn-success" onclick="abrirModalCrear()">📝 Nuevo Incidente</button>
+    </div>
+
+    <div class="content">
+        <div id="conexionStatus" class="connection-status disconnected">
+            🔴 Verificando conexión con MS-Usuarios...
+        </div>
+
+        <div class="filter-section">
+            <select id="filtroEstado" class="filter-select" onchange="filtrarPorEstado()">
+                <option value="">📋 Todos los estados</option>
+                <option value="ABIERTO">⚠️ Abiertos</option>
+                <option value="EN_PROCESO">🔄 En Proceso</option>
+                <option value="CERRADO">✅ Cerrados</option>
+            </select>
+
+            <select id="filtroPrioridad" class="filter-select" onchange="filtrarPorPrioridad()">
+                <option value="">📊 Todas las prioridades</option>
+                <option value="ALTA">🔴 Alta</option>
+                <option value="MEDIA">🟡 Media</option>
+                <option value="BAJA">🟢 Baja</option>
+            </select>
+
+            <button class="btn btn-info" style="padding: 8px 16px;" onclick="limpiarFiltros()">🗑️ Limpiar filtros</button>
+        </div>
+
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+
+        <div id="loading" class="loading"></div>
+        <div id="tableContainer" class="table-container"></div>
+    </div>
+
+    <div class="footer">
+        <p>Spring Boot 3.5.10</p>
+        <p style="font-size: 0.85em; margin-top: 5px;">© 2026 - Sistema de Soporte Técnico</p>
+    </div>
+</div>
+
+<!-- MODAL CREAR INCIDENTE -->
+<div id="modalIncidente" class="modal">
+    <div class="modal-content">
+        <h2>📝 Crear Nuevo Incidente</h2>
+        <div class="form-group">
+            <label>Título del problema:</label>
+            <input type="text" id="incidenteTitulo" placeholder="Ej: PC no enciende, correo falla, etc." required>
+        </div>
+        <div class="form-group">
+            <label>Descripción detallada:</label>
+            <textarea id="incidenteDescripcion" rows="3" placeholder="Describa el problema con el mayor detalle posible..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Prioridad:</label>
+            <select id="incidentePrioridad" required>
+                <option value="ALTA">🔴 Alta</option>
+                <option value="MEDIA" selected>🟡 Media</option>
+                <option value="BAJA">🟢 Baja</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>ID del Usuario:</label>
+            <input type="number" id="incidenteUsuarioId" placeholder="ID del usuario que reporta" required>
+            <small style="color: #666;">Verificar ID en MS-Usuarios:8081</small>
+        </div>
+        <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px;">
+            <button class="btn btn-success" onclick="crearIncidente()">Guardar Incidente</button>
+            <button class="btn btn-danger" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8082/api';
+    const USUARIOS_URL = 'http://localhost:8081/api/usuarios';
+
+    let todosLosIncidentes = [];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarIncidentes();
+        verificarConexionUsuarios();
+    });
+
+    function mostrarError(mensaje) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = mensaje;
+        errorDiv.style.display = 'block';
+        setTimeout(() => errorDiv.style.display = 'none', 3000);
+    }
+
+    function mostrarSuccess(mensaje) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = mensaje;
+        successDiv.style.display = 'block';
+        setTimeout(() => successDiv.style.display = 'none', 3000);
+    }
+
+    function mostrarLoading(show) {
+        document.getElementById('loading').style.display = show ? 'block' : 'none';
+    }
+
+    async function verificarConexionUsuarios() {
+        const statusDiv = document.getElementById('conexionStatus');
+        try {
+            const response = await fetch(USUARIOS_URL);
+            if (response.ok) {
+                statusDiv.className = 'connection-status connected';
+                statusDiv.innerHTML = '🟢 Conectado a MS-Usuarios:8081 ✅';
+            } else {
+                throw new Error('No conectado');
+            }
+        } catch (error) {
+            statusDiv.className = 'connection-status disconnected';
+            statusDiv.innerHTML = '🔴 ERROR: MS-Usuarios no está corriendo en puerto 8081. Inícialo primero.';
+        }
+    }
+
+    async function cargarIncidentes() {
+        mostrarLoading(true);
+        try {
+            const response = await fetch(`${API_URL}/incidentes`);
+            if (!response.ok) throw new Error('Error al cargar incidentes');
+
+            todosLosIncidentes = await response.json();
+
+            // Actualizar estadísticas
+            actualizarEstadisticas(todosLosIncidentes);
+
+            // Mostrar tabla
+            mostrarTablaIncidentes(todosLosIncidentes);
+
+        } catch (error) {
+            mostrarError('❌ Error al cargar incidentes: ' + error.message);
+        }
+        mostrarLoading(false);
+    }
+
+    async function mostrarTablaIncidentes(incidentes) {
+        let html = '<table><tr><th>ID</th><th>Título</th><th>Prioridad</th><th>Estado</th><th>Usuario</th><th>Fecha Creación</th><th>Acciones</th></tr>';
+
+        for (const i of incidentes) {
+            let nombreUsuario = 'Cargando...';
+
+            // Intentar obtener nombre del usuario desde MS-Usuarios
+            try {
+                const userRes = await fetch(`${USUARIOS_URL}/${i.usuarioId}`);
+                if (userRes.ok) {
+                    const user = await userRes.json();
+                    nombreUsuario = user.nombre;
+                } else {
+                    nombreUsuario = `ID: ${i.usuarioId}`;
+                }
+            } catch (e) {
+                nombreUsuario = `ID: ${i.usuarioId}`;
+            }
+
+            html += `<tr>
+                    <td>${i.id}</td>
+                    <td><strong>${i.titulo}</strong><br><small>${i.descripcion ? i.descripcion.substring(0, 50) + '...' : ''}</small></td>
+                    <td><span class="badge badge-${i.prioridad}">${i.prioridad}</span></td>
+                    <td><span class="badge badge-${i.estado}">${i.estado}</span></td>
+                    <td>${nombreUsuario}</td>
+                    <td>${i.fechaCreacion || 'N/A'}</td>
+                    <td>
+                        <button class="btn" style="background: #17a2b8; padding: 5px 10px;" onclick="editarEstado(${i.id}, '${i.estado}')">✏️</button>
+                        <button class="btn" style="background: #dc3545; padding: 5px 10px;" onclick="eliminarIncidente(${i.id})">🗑️</button>
+                    </td>
+                </tr>`;
+        }
+
+        html += '</table>';
+        document.getElementById('tableContainer').innerHTML = html;
+    }
+
+    function actualizarEstadisticas(incidentes) {
+        document.getElementById('totalIncidentes').textContent = incidentes.length;
+        document.getElementById('abiertos').textContent = incidentes.filter(i => i.estado === 'ABIERTO').length;
+        document.getElementById('proceso').textContent = incidentes.filter(i => i.estado === 'EN_PROCESO').length;
+        document.getElementById('cerrados').textContent = incidentes.filter(i => i.estado === 'CERRADO').length;
+    }
+
+    function filtrarPorEstado() {
+        const estado = document.getElementById('filtroEstado').value;
+        const prioridad = document.getElementById('filtroPrioridad').value;
+
+        let filtrados = todosLosIncidentes;
+
+        if (estado) {
+            filtrados = filtrados.filter(i => i.estado === estado);
+        }
+
+        if (prioridad) {
+            filtrados = filtrados.filter(i => i.prioridad === prioridad);
+        }
+
+        mostrarTablaIncidentes(filtrados);
+    }
+
+    function filtrarPorPrioridad() {
+        filtrarPorEstado(); // Reusa la misma función
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('filtroEstado').value = '';
+        document.getElementById('filtroPrioridad').value = '';
+        mostrarTablaIncidentes(todosLosIncidentes);
+    }
+
+    async function crearIncidente() {
+        const titulo = document.getElementById('incidenteTitulo').value;
+        const descripcion = document.getElementById('incidenteDescripcion').value;
+        const prioridad = document.getElementById('incidentePrioridad').value;
+        const usuarioId = parseInt(document.getElementById('incidenteUsuarioId').value);
+
+        if (!titulo || !usuarioId) {
+            mostrarError('❌ Título e ID de usuario son obligatorios');
+            return;
+        }
+
+        const incidente = {
+            titulo: titulo,
+            descripcion: descripcion,
+            prioridad: prioridad,
+            estado: 'ABIERTO',
+            usuarioId: usuarioId
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/incidentes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(incidente)
+            });
+
+            if (response.ok) {
+                mostrarSuccess('✅ Incidente creado correctamente');
+                cerrarModal();
+                cargarIncidentes();
+                limpiarForm();
+            } else {
+                const error = await response.text();
+                throw new Error(error);
+            }
+        } catch (error) {
+            mostrarError('❌ Error al crear incidente: ' + error.message);
+        }
+    }
+
+    async function cambiarEstado(id, nuevoEstado) {
+        try {
+            const response = await fetch(`${API_URL}/incidentes/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ estado: nuevoEstado })
+            });
+
+            if (response.ok) {
+                mostrarSuccess(`✅ Estado cambiado a ${nuevoEstado}`);
+                cargarIncidentes();
+            }
+        } catch (error) {
+            mostrarError('❌ Error al cambiar estado');
+        }
+    }
+
+    async function editarEstado(id, estadoActual) {
+        const nuevoEstado = prompt('Ingrese nuevo estado (ABIERTO, EN_PROCESO, CERRADO):', estadoActual);
+        if (nuevoEstado && ['ABIERTO', 'EN_PROCESO', 'CERRADO'].includes(nuevoEstado)) {
+            await cambiarEstado(id, nuevoEstado);
+        } else if (nuevoEstado) {
+            mostrarError('❌ Estado no válido');
+        }
+    }
+
+    async function eliminarIncidente(id) {
+        if (confirm('¿Está seguro de eliminar este incidente?')) {
+            try {
+                const response = await fetch(`${API_URL}/incidentes/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    mostrarSuccess('✅ Incidente eliminado');
+                    cargarIncidentes();
+                }
+            } catch (error) {
+                mostrarError('❌ Error al eliminar');
+            }
+        }
+    }
+
+    function abrirModalCrear() {
+        document.getElementById('modalIncidente').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalIncidente').style.display = 'none';
+        limpiarForm();
+    }
+
+    function limpiarForm() {
+        document.getElementById('incidenteTitulo').value = '';
+        document.getElementById('incidenteDescripcion').value = '';
+        document.getElementById('incidentePrioridad').value = 'MEDIA';
+        document.getElementById('incidenteUsuarioId').value = '';
+    }
+
+    window.onclick = function(event) {
+        if (event.target.classList.contains('modal')) {
+            event.target.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>
