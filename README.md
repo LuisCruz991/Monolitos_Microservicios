@@ -49,14 +49,70 @@ El proyecto está desarrollado en dos versiones para fines educativos:
 
 
 🛠️ Tecnologías Utilizadas
-Tecnología	Versión	Uso
 Java	21	Lenguaje de programación
-Spring Boot	3.5.10	Framework principal
+
+Spring Boot	3.5.10	Framework principal}
+
 Spring Data JPA	3.5.10	Persistencia de datos
+
 Spring Web	3.5.10	API REST
+
 PostgreSQL	16	Base de datos
-Hibernate	6.4	ORM
-Lombok	1.18.36	Reducción de código boilerplate
-Maven	3.9	Gestor de dependencias
+
+Lombok	
+Maven	
 HTML/CSS/JS	-	Interfaces de usuario
+
+
+INCIDENTFLOW-PROYECTO/
+│
+├── 📁 incidentflow-monolito/                 # Versión Monolítica (Puerto 8080)
+│   ├── pom.xml
+│   └── src/
+│       └── main/
+│           ├── java/com/incidentflow/
+│           │   ├── controller/
+│           │   ├── model/
+│           │   ├── repository/
+│           │   ├── service/
+│           │   └── dto/
+│           └── resources/
+│               ├── application.properties
+│               ├── import.sql
+│               └── static/
+│                   └── app.html
+│
+├── 📁 incidentflow-ms-usuarios/              # Microservicio Usuarios (8081)
+│   ├── pom.xml
+│   └── src/
+│       └── main/
+│           ├── java/com/incidentflow/usuarios/
+│           │   ├── UsuariosApplication.java
+│           │   ├── controller/
+│           │   ├── model/
+│           │   ├── repository/
+│           │   ├── service/
+│           │   ├── dto/
+│           │   └── config/
+│           └── resources/
+│               ├── application.properties
+│               └── static/
+│                   └── app-usuarios.html
+│
+└── 📁 incidentflow-ms-incidentes/             # Microservicio Incidentes (8082)
+    ├── pom.xml
+    └── src/
+        └── main/
+            ├── java/com/incidentflow/incidentes/
+            │   ├── IncidentesApplication.java
+            │   ├── controller/
+            │   ├── model/
+            │   ├── repository/
+            │   ├── service/
+            │   ├── dto/
+            │   └── config/
+            └── resources/
+                ├── application.properties
+                └── static/
+                    └── app-incidentes.html
 
