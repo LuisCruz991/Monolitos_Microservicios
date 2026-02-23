@@ -93,19 +93,3 @@ Cambiar estado (Abierto, Proceso, Cerrado)
 Filtrar por estado y prioridad
 Eliminar incidente
 
-# ESTRUCTURA DEL PROYECTO
-text
-incidentflow/
-│
-├── incidentflow-monolito/           # Versión todo junto
-│   ├── pom.xml
-│   └── src/
-│
-├── incidentflow-ms-usuarios/        # Microservicio 1
-│   ├── pom.xml
-│   └── src/
-│
-└── incidentflow-ms-incidentes/      # Microservicio 2
-    ├── pom.xml
-    └── src/
-
