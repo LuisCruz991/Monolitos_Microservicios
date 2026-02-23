@@ -93,11 +93,3 @@ Cambiar estado (Abierto, Proceso, Cerrado)
 Filtrar por estado y prioridad
 Eliminar incidente
 
-# API REST
-# MS-Usuarios (http://localhost:8081/api)
-Método	Endpoint	Descripción
-GET	/usuarios	Listar todos
-GET	/usuarios/{id}	Buscar por ID
-POST	/usuarios	Crear usuario
-PUT	/usuarios/{id}	Actualizar
-DELETE	/usuarios/{id}	Eliminar
