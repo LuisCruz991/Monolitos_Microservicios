@@ -50,6 +50,7 @@ El proyecto está desarrollado en dos versiones para fines educativos:
 🏗️ Arquitectura
 Versión Microservicios (2 servicios independientes)
 text
+
 ┌─────────────────┐      ┌─────────────────┐
 │                 │      │                 │
 │  MS-USUARIOS    │◄────►│  MS-INCIDENTES  │
@@ -63,6 +64,9 @@ text
 │ IncidentFlow_   │      │ IncidentFlow_   │
 │   Usuarios      │      │   Incidentes    │
 └─────────────────┘      └─────────────────┘
+
+
+
 Características de la Arquitectura
 ✅ Comunicación síncrona via REST (HTTP)
 
