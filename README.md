@@ -1,118 +1,103 @@
 # Monolitos_Microservicios
 Arquitectura monolitica y de microservicios
 
-🚀 INCIDENTFLOW - Sistema de Gestión de Tickets de Soporte Técnico
-https://img.shields.io/badge/Java-21-orange
-https://img.shields.io/badge/Spring%2520Boot-3.5.10-brightgreen
-https://img.shields.io/badge/PostgreSQL-16-blue
-https://img.shields.io/badge/License-MIT-yellow
+# INCIDENTFLOW - SISTEMA DE TICKETS DE SOPORTE TÉCNICO
+# INCIDENTFLOW
+Sistema de gestión de tickets de soporte técnico desarrollado con Spring Boot y PostgreSQL.
 
-📋 Tabla de Contenidos
-Descripción General
+# DESCRIPCIÓN
+IncidentFlow permite a empresas gestionar incidentes reportados por empleados. Los usuarios pueden crear tickets y los técnicos resolverlos de manera organizada.
 
-Arquitectura
+# ARQUITECTURA
+El proyecto tiene DOS versiones:
 
-Tecnologías Utilizadas
+VERSIÓN MONOLÍTICA (Todo junto)
 
-Estructura del Proyecto
+Puerto: 8080
 
-Requisitos Previos
+Una sola base de datos
 
-Configuración de Base de Datos
+Una sola aplicación
 
-Instalación y Ejecución
+# VERSIÓN MICROSERVICIOS (Separado)
 
-Guía de Uso
+MS-Usuarios (Puerto 8081): Gestiona empleados
 
-API REST Documentation
+MS-Incidentes (Puerto 8082): Gestiona tickets
 
-Contribución
+Se comunican por REST
 
-Licencia
+# TECNOLOGÍAS
+Java 21
 
-🎯 Descripción General
-IncidentFlow es un sistema de gestión de tickets de soporte técnico diseñado para empresas que necesitan organizar y dar seguimiento a incidentes reportados por sus empleados. El sistema permite:
+Spring Boot 3.5.10
 
-👥 Gestionar usuarios (empleados, técnicos, administradores)
+Spring Data JPA
 
-📝 Crear y dar seguimiento a incidentes (tickets de soporte)
+Spring Web
 
-🔄 Validar usuarios antes de crear incidentes mediante comunicación REST
+PostgreSQL 18
 
-📊 Visualizar estadísticas en tiempo real
+Lombok
 
-El proyecto está desarrollado en dos versiones para fines educativos:
+Maven
 
-🏗️ Versión Monolítica: Todo en una sola aplicación
+HTML/CSS/JavaScript
 
-🧩 Versión Microservicios: Dividida en servicios independientes
+# REQUISITOS PREVIOS
+Java JDK 21
 
+Maven 3.9+
 
-🛠️ Tecnologías Utilizadas
-Java	21	Lenguaje de programación
+PostgreSQL 16
 
-Spring Boot	3.5.10	Framework principal}
+Git (opcional)
 
-Spring Data JPA	3.5.10	Persistencia de datos
+# CONFIGURACIÓN DE BASE DE DATOS
+Crear las bases de datos en PostgreSQL:
+CREATE DATABASE "IncidentFlow_Usuarios";
+CREATE DATABASE "IncidentFlow_Incidentes";
 
-Spring Web	3.5.10	API REST
+Credenciales por defecto:
+Usuario: postgres
+Password: 1234
 
-PostgreSQL	16	Base de datos
+Si usas otras credenciales, actualiza los archivos application.properties.
 
-Lombok	
-Maven	
-HTML/CSS/JS	-	Interfaces de usuario
+# ACCESO A LAS APLICACIONES
+Microservicio Usuarios
+App Web: http://localhost:8081/app-usuarios.html
+API REST: http://localhost:8081/api/usuarios
 
+# Microservicio Incidentes
+App Web: http://localhost:8082/app-incidentes.html
+API REST: http://localhost:8082/api/incidentes
 
-INCIDENTFLOW-PROYECTO/
-│
-├── 📁 incidentflow-monolito/                 # Versión Monolítica (Puerto 8080)
-│   ├── pom.xml
-│   └── src/
-│       └── main/
-│           ├── java/com/incidentflow/
-│           │   ├── controller/
-│           │   ├── model/
-│           │   ├── repository/
-│           │   ├── service/
-│           │   └── dto/
-│           └── resources/
-│               ├── application.properties
-│               ├── import.sql
-│               └── static/
-│                   └── app.html
-│
-├── 📁 incidentflow-ms-usuarios/              # Microservicio Usuarios (8081)
-│   ├── pom.xml
-│   └── src/
-│       └── main/
-│           ├── java/com/incidentflow/usuarios/
-│           │   ├── UsuariosApplication.java
-│           │   ├── controller/
-│           │   ├── model/
-│           │   ├── repository/
-│           │   ├── service/
-│           │   ├── dto/
-│           │   └── config/
-│           └── resources/
-│               ├── application.properties
-│               └── static/
-│                   └── app-usuarios.html
-│
-└── 📁 incidentflow-ms-incidentes/             # Microservicio Incidentes (8082)
-    ├── pom.xml
-    └── src/
-        └── main/
-            ├── java/com/incidentflow/incidentes/
-            │   ├── IncidentesApplication.java
-            │   ├── controller/
-            │   ├── model/
-            │   ├── repository/
-            │   ├── service/
-            │   ├── dto/
-            │   └── config/
-            └── resources/
-                ├── application.properties
-                └── static/
-                    └── app-incidentes.html
+# Versión Monolítica
+App Web: http://localhost:8080/app.html
+API Usuarios: http://localhost:8080/api/usuarios
+API Incidentes: http://localhost:8080/api/incidentes
 
+# FUNCIONALIDADES
+MS-Usuarios
+Ver listado de usuarios
+Crear nuevo usuario
+Editar usuario
+Eliminar usuario
+Estadísticas por rol
+
+# MS-Incidentes
+Ver listado de incidentes
+Crear incidente (valida usuario en MS-Usuarios)
+Cambiar estado (Abierto, Proceso, Cerrado)
+Filtrar por estado y prioridad
+Eliminar incidente
+
+# API REST
+# MS-Usuarios (http://localhost:8081/api)
+Método	Endpoint	Descripción
+GET	/usuarios	Listar todos
+GET	/usuarios/{id}	Buscar por ID
+POST	/usuarios	Crear usuario
+PUT	/usuarios/{id}	Actualizar
+DELETE	/usuarios/{id}	Eliminar
