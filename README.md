@@ -47,34 +47,6 @@ El proyecto está desarrollado en dos versiones para fines educativos:
 
 🧩 Versión Microservicios: Dividida en servicios independientes
 
-🏗️ Arquitectura
-Versión Microservicios (2 servicios independientes)
-text
-
-┌─────────────────┐      ┌─────────────────┐
-│                 │      │                 │
-│  MS-USUARIOS    │◄────►│  MS-INCIDENTES  │
-│  (Puerto 8081)  │ REST │  (Puerto 8082)  │
-│                 │      │                 │
-└────────┬────────┘      └────────┬────────┘
-         │                        │
-         ▼                        ▼
-┌─────────────────┐      ┌─────────────────┐
-│   PostgreSQL    │      │   PostgreSQL    │
-│ IncidentFlow_   │      │ IncidentFlow_   │
-│   Usuarios      │      │   Incidentes    │
-└─────────────────┘      └─────────────────┘
-
-
-
-Características de la Arquitectura
-✅ Comunicación síncrona via REST (HTTP)
-
-✅ Bases de datos independientes (una por servicio)
-
-✅ Despliegue independiente (cada servicio en su puerto)
-
-✅ Aislamiento de fallos (un servicio puede caer sin afectar al otro parcialmente)
 
 🛠️ Tecnologías Utilizadas
 Tecnología	Versión	Uso
@@ -87,3 +59,4 @@ Hibernate	6.4	ORM
 Lombok	1.18.36	Reducción de código boilerplate
 Maven	3.9	Gestor de dependencias
 HTML/CSS/JS	-	Interfaces de usuario
+
