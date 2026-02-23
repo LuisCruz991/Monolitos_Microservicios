@@ -1,1 +1,0 @@
-INSERT INTO asignacion (id, incidente_id, tecnico_id, fecha_asignacion, estado) VALUES (1, 1, 2, '2026-01-15', 'ACTIVA');
